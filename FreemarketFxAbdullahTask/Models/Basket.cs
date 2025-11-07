@@ -9,24 +9,24 @@ public class Basket
 
     public decimal GetSubtotal()
     {
-        return Items.Sum(item => item.GetTotalPrice());
+        return Math.Round(Items.Sum(item => item.GetTotalPrice()), 2);
     }
 
     public decimal GetDiscountAmount()
     {
         var eligibleItems = Items.Where(item => !item.IsDiscounted).Sum(item => item.GetTotalPrice());
-        return eligibleItems * (DiscountPercentage / 100);
+        return Math.Round(eligibleItems * (DiscountPercentage / 100), 2);
     }
 
     public decimal GetTotalWithoutVat()
     {
-        return GetSubtotal() - GetDiscountAmount();
+        return Math.Round(GetSubtotal() - GetDiscountAmount(), 2);
     }
 
     public decimal GetTotalWithVat()
     {
         var totalWithoutVat = GetTotalWithoutVat();
-        return totalWithoutVat * 1.20m;
+        return Math.Round(totalWithoutVat * 1.20m, 2);
     }
 }
 

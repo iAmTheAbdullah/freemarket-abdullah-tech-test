@@ -12,14 +12,14 @@ public class DiscountService : IDiscountService
         }
 
         var basePrice = item.Price * item.Quantity;
-        return basePrice * (item.DiscountPercentage / 100);
+        return Math.Round(basePrice * (item.DiscountPercentage / 100), 2);
     }
 
     public decimal CalculateBasketDiscount(Basket basket)
     {
         var eligibleItems = basket.Items.Where(item => !item.IsDiscounted);
         var eligibleTotal = eligibleItems.Sum(item => item.Price * item.Quantity);
-        return eligibleTotal * (basket.DiscountPercentage / 100);
+        return Math.Round(eligibleTotal * (basket.DiscountPercentage / 100), 2);
     }
 
     public bool CanApplyDiscountCode(BasketItem item)

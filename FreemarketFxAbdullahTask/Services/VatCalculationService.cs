@@ -6,12 +6,12 @@ public class VatCalculationService : IVatCalculationService
 
     public decimal CalculateVat(decimal amount)
     {
-        return amount * VatRate;
+        return Math.Round(amount * VatRate, 2);
     }
 
     public decimal AddVat(decimal amount)
     {
-        return amount * (1 + VatRate);
+        return Math.Round(amount * (1 + VatRate), 2);
     }
 }
 

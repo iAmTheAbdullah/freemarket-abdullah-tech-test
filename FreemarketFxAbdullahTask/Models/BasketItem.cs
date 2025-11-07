@@ -15,9 +15,9 @@ public class BasketItem
         var basePrice = Price * Quantity;
         if (IsDiscounted)
         {
-            return basePrice * (1 - DiscountPercentage / 100);
+            return Math.Round(basePrice * (1 - DiscountPercentage / 100), 2);
         }
-        return basePrice;
+        return Math.Round(basePrice, 2);
     }
 }
 
