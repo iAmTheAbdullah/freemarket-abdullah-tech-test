@@ -50,42 +50,71 @@ Skipped to prioritize architecture and testing:
 - Async throughout for scalability
 - In-memory DB for quick setup (would use SQL in prod)
 
-## API
+## API Usage
 
-All endpoints return JSON.
+Use curl or Postman to test endpoints. Examples below assume `https://localhost:5001`.
 
 ### Create Basket
-`POST /api/basket` → returns basket GUID
-
-### Get Basket
-`GET /api/basket/{id}` → full basket with items and totals
+```bash
+curl -X POST https://localhost:5001/api/basket -k
+# Returns: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+```
 
 ### Add Item
-```
-POST /api/basket/{id}/items
-{
-  "productName": "string",
-  "price": 10.00,
-  "quantity": 1,
-  "isDiscounted": false,
-  "discountPercentage": 0
-}
+```bash
+curl -X POST https://localhost:5001/api/basket/{basketId}/items -k \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productName": "Laptop",
+    "price": 999.99,
+    "quantity": 1,
+    "isDiscounted": false,
+    "discountPercentage": 0
+  }'
 ```
 
-### Remove Item
-`DELETE /api/basket/{id}/items/{itemId}`
-
-### Get Totals
-- `GET /api/basket/{id}/total` - with VAT
-- `GET /api/basket/{id}/total-without-vat` - without VAT
+### Add Discounted Item
+```bash
+curl -X POST https://localhost:5001/api/basket/{basketId}/items -k \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productName": "Mouse",
+    "price": 25.00,
+    "quantity": 2,
+    "isDiscounted": true,
+    "discountPercentage": 15
+  }'
+```
 
 ### Apply Discount Code
-```
-POST /api/basket/{id}/discount-code
-{ "discountCode": "SAVE10" }
+```bash
+curl -X POST https://localhost:5001/api/basket/{basketId}/discount-code -k \
+  -H "Content-Type: application/json" \
+  -d '{ "discountCode": "SAVE10" }'
 ```
 
 Seeded codes: `SAVE10`, `SAVE20`, `SAVE30`
+
+### Get Basket Details
+```bash
+curl https://localhost:5001/api/basket/{basketId} -k
+```
+
+### Get Totals
+```bash
+# With VAT
+curl https://localhost:5001/api/basket/{basketId}/total -k
+
+# Without VAT
+curl https://localhost:5001/api/basket/{basketId}/total-without-vat -k
+```
+
+### Remove Item
+```bash
+curl -X DELETE https://localhost:5001/api/basket/{basketId}/items/{itemId} -k
+```
+
+Note: `-k` flag bypasses SSL cert validation for local dev.
 
 ## Project Structure
 
