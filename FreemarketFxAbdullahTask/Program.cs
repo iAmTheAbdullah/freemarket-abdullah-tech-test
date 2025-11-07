@@ -8,7 +8,7 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddDbContext<BasketDbContext>(options =>
             options.UseInMemoryDatabase("BasketDb"));
@@ -16,15 +16,15 @@ public class Program
         builder.Services.AddCommandHandlers();
         builder.Services.AddQueryHandlers();
 
-        builder.Services.AddControllers();
+builder.Services.AddControllers();
 
-        var app = builder.Build();
+var app = builder.Build();
 
         await SeedDataAsync(app.Services);
 
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.MapControllers();
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
 
         await app.RunAsync();
     }
