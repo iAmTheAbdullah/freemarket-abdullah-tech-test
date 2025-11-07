@@ -32,10 +32,6 @@ public class BasketController : ControllerBase
         _getTotalHandler = getTotalHandler;
     }
 
-    /// <summary>
-    /// Creates a new shopping basket
-    /// </summary>
-    /// <returns>The ID of the newly created basket</returns>
     [HttpPost]
     public async Task<ActionResult<Guid>> CreateBasket(CancellationToken cancellationToken)
     {
@@ -43,11 +39,6 @@ public class BasketController : ControllerBase
         return Ok(basketId);
     }
 
-    /// <summary>
-    /// Retrieves a basket by its ID
-    /// </summary>
-    /// <param name="basketId">The basket ID</param>
-    /// <returns>The basket details including all items and totals</returns>
     [HttpGet("{basketId:guid}")]
     public async Task<ActionResult<BasketResponse>> GetBasket(Guid basketId, CancellationToken cancellationToken)
     {
@@ -82,12 +73,6 @@ public class BasketController : ControllerBase
         return Ok(response);
     }
 
-    /// <summary>
-    /// Adds an item to the basket. If the same item already exists, quantity is increased
-    /// </summary>
-    /// <param name="basketId">The basket ID</param>
-    /// <param name="request">Item details including price, quantity, and discount info</param>
-    /// <returns>The ID of the added or updated item</returns>
     [HttpPost("{basketId:guid}/items")]
     public async Task<ActionResult<Guid>> AddItem(Guid basketId, [FromBody] AddItemRequest request, CancellationToken cancellationToken)
     {
@@ -112,11 +97,6 @@ public class BasketController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Removes an item from the basket
-    /// </summary>
-    /// <param name="basketId">The basket ID</param>
-    /// <param name="itemId">The item ID to remove</param>
     [HttpDelete("{basketId:guid}/items/{itemId:guid}")]
     public async Task<ActionResult> RemoveItem(Guid basketId, Guid itemId, CancellationToken cancellationToken)
     {
@@ -136,11 +116,6 @@ public class BasketController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>
-    /// Gets the total cost of the basket including 20% VAT
-    /// </summary>
-    /// <param name="basketId">The basket ID</param>
-    /// <returns>Total cost with VAT applied</returns>
     [HttpGet("{basketId:guid}/total")]
     public async Task<ActionResult<decimal>> GetTotalWithVat(Guid basketId, CancellationToken cancellationToken)
     {
@@ -160,11 +135,6 @@ public class BasketController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Gets the total cost of the basket without VAT
-    /// </summary>
-    /// <param name="basketId">The basket ID</param>
-    /// <returns>Total cost without VAT</returns>
     [HttpGet("{basketId:guid}/total-without-vat")]
     public async Task<ActionResult<decimal>> GetTotalWithoutVat(Guid basketId, CancellationToken cancellationToken)
     {
@@ -184,11 +154,6 @@ public class BasketController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Applies a discount code to the basket. Only applies to non-discounted items
-    /// </summary>
-    /// <param name="basketId">The basket ID</param>
-    /// <param name="request">Discount code to apply</param>
     [HttpPost("{basketId:guid}/discount-code")]
     public async Task<ActionResult> ApplyDiscountCode(Guid basketId, [FromBody] ApplyDiscountCodeRequest request, CancellationToken cancellationToken)
     {
