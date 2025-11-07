@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<IDiscountService, DiscountService>();
+        services.AddScoped<IVatCalculationService, VatCalculationService>();
         
         services.AddScoped<ICommandHandler<CreateBasketCommand, Guid>, CreateBasketCommandHandler>();
         services.AddScoped<ICommandHandler<AddItemCommand, Guid>, AddItemCommandHandler>();
