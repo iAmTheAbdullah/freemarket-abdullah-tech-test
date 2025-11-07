@@ -12,18 +12,24 @@ public class BasketController : ControllerBase
     private readonly ICommandHandler<CreateBasketCommand, Guid> _createBasketHandler;
     private readonly ICommandHandler<AddItemCommand, Guid> _addItemHandler;
     private readonly ICommandHandler<RemoveItemCommand, bool> _removeItemHandler;
+    private readonly ICommandHandler<ApplyDiscountCodeCommand, bool> _applyDiscountHandler;
     private readonly IQueryHandler<GetBasketQuery, Models.Basket?> _getBasketHandler;
+    private readonly IQueryHandler<GetBasketTotalQuery, decimal> _getTotalHandler;
 
     public BasketController(
         ICommandHandler<CreateBasketCommand, Guid> createBasketHandler,
         ICommandHandler<AddItemCommand, Guid> addItemHandler,
         ICommandHandler<RemoveItemCommand, bool> removeItemHandler,
-        IQueryHandler<GetBasketQuery, Models.Basket?> getBasketHandler)
+        ICommandHandler<ApplyDiscountCodeCommand, bool> applyDiscountHandler,
+        IQueryHandler<GetBasketQuery, Models.Basket?> getBasketHandler,
+        IQueryHandler<GetBasketTotalQuery, decimal> getTotalHandler)
     {
         _createBasketHandler = createBasketHandler;
         _addItemHandler = addItemHandler;
         _removeItemHandler = removeItemHandler;
+        _applyDiscountHandler = applyDiscountHandler;
         _getBasketHandler = getBasketHandler;
+        _getTotalHandler = getTotalHandler;
     }
 
     [HttpPost]
@@ -108,6 +114,63 @@ public class BasketController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpGet("{basketId}/total")]
+    public async Task<ActionResult<decimal>> GetTotalWithVat(Guid basketId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var total = await _getTotalHandler.HandleAsync(new GetBasketTotalQuery
+            {
+                BasketId = basketId,
+                IncludeVat = true
+            }, cancellationToken);
+
+            return Ok(total);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpGet("{basketId}/total-without-vat")]
+    public async Task<ActionResult<decimal>> GetTotalWithoutVat(Guid basketId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var total = await _getTotalHandler.HandleAsync(new GetBasketTotalQuery
+            {
+                BasketId = basketId,
+                IncludeVat = false
+            }, cancellationToken);
+
+            return Ok(total);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPost("{basketId}/discount-code")]
+    public async Task<ActionResult> ApplyDiscountCode(Guid basketId, [FromBody] ApplyDiscountCodeRequest request, CancellationToken cancellationToken)
+    {
+        var command = new ApplyDiscountCodeCommand
+        {
+            BasketId = basketId,
+            DiscountCode = request.DiscountCode
+        };
+
+        var result = await _applyDiscountHandler.HandleAsync(command, cancellationToken);
+
+        if (!result)
+        {
+            return NotFound("Basket or discount code not found");
+        }
+
+        return Ok();
     }
 }
 
