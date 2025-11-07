@@ -4,7 +4,7 @@ public class BasketItem
 {
     public Guid Id { get; set; }
     public Guid BasketId { get; set; }
-    public string ProductName { get; set; }
+    public string ProductName { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public int Quantity { get; set; }
     public bool IsDiscounted { get; set; }
