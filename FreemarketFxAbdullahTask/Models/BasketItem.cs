@@ -2,6 +2,8 @@ namespace FreemarketFxAbdullahTask.Models;
 
 public class BasketItem
 {
+    private const decimal PercentageDivisor = 100m;
+
     public Guid Id { get; set; }
     public Guid BasketId { get; set; }
     public string ProductName { get; set; } = string.Empty;
@@ -15,7 +17,7 @@ public class BasketItem
         var basePrice = Price * Quantity;
         if (IsDiscounted)
         {
-            return Math.Round(basePrice * (1 - DiscountPercentage / 100), 2);
+            return Math.Round(basePrice * (1 - DiscountPercentage / PercentageDivisor), 2);
         }
         return Math.Round(basePrice, 2);
     }

@@ -1,4 +1,5 @@
 using FreemarketFxAbdullahTask.Data;
+using FreemarketFxAbdullahTask.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreemarketFxAbdullahTask.Queries.Handlers;
@@ -6,10 +7,12 @@ namespace FreemarketFxAbdullahTask.Queries.Handlers;
 public class GetBasketTotalQueryHandler : IQueryHandler<GetBasketTotalQuery, decimal>
 {
     private readonly BasketDbContext _context;
+    private readonly IBasketCalculationService _calculationService;
 
-    public GetBasketTotalQueryHandler(BasketDbContext context)
+    public GetBasketTotalQueryHandler(BasketDbContext context, IBasketCalculationService calculationService)
     {
         _context = context;
+        _calculationService = calculationService;
     }
 
     public async Task<decimal> HandleAsync(GetBasketTotalQuery query, CancellationToken cancellationToken = default)
@@ -23,12 +26,9 @@ public class GetBasketTotalQueryHandler : IQueryHandler<GetBasketTotalQuery, dec
             throw new InvalidOperationException($"Basket with ID {query.BasketId} not found");
         }
 
-        if (query.IncludeVat)
-        {
-            return Math.Round(basket.GetTotalWithVat(), 2);
-        }
-
-        return Math.Round(basket.GetTotalWithoutVat(), 2);
+        return query.IncludeVat 
+            ? _calculationService.CalculateTotalWithVat(basket)
+            : _calculationService.CalculateTotalWithoutVat(basket);
     }
 }
 

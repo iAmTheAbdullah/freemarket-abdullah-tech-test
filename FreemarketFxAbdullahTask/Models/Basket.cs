@@ -2,6 +2,9 @@ namespace FreemarketFxAbdullahTask.Models;
 
 public class Basket
 {
+    private const decimal PercentageDivisor = 100m;
+    private const decimal VatMultiplier = 1.20m;
+
     public Guid Id { get; set; }
     public List<BasketItem> Items { get; set; } = new();
     public string? DiscountCode { get; set; }
@@ -15,7 +18,7 @@ public class Basket
     public decimal GetDiscountAmount()
     {
         var eligibleItems = Items.Where(item => !item.IsDiscounted).Sum(item => item.GetTotalPrice());
-        return Math.Round(eligibleItems * (DiscountPercentage / 100), 2);
+        return Math.Round(eligibleItems * (DiscountPercentage / PercentageDivisor), 2);
     }
 
     public decimal GetTotalWithoutVat()
@@ -26,7 +29,7 @@ public class Basket
     public decimal GetTotalWithVat()
     {
         var totalWithoutVat = GetTotalWithoutVat();
-        return Math.Round(totalWithoutVat * 1.20m, 2);
+        return Math.Round(totalWithoutVat * VatMultiplier, 2);
     }
 }
 

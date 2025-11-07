@@ -3,6 +3,7 @@ using FreemarketFxAbdullahTask.Data;
 using FreemarketFxAbdullahTask.Models;
 using FreemarketFxAbdullahTask.Queries;
 using FreemarketFxAbdullahTask.Queries.Handlers;
+using FreemarketFxAbdullahTask.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreemarketFxAbdullahTask.Tests.Unit.Queries;
@@ -19,7 +20,9 @@ public class GetBasketTotalQueryHandlerTests
             .Options;
         _context = new BasketDbContext(options);
 
-        _handler = new GetBasketTotalQueryHandler(_context);
+        var vatService = new VatCalculationService();
+        var calculationService = new BasketCalculationService(vatService);
+        _handler = new GetBasketTotalQueryHandler(_context, calculationService);
     }
 
     [Fact]

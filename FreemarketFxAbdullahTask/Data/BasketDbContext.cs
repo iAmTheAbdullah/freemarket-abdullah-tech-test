@@ -21,6 +21,10 @@ public class BasketDbContext : DbContext
         {
             entity.HasKey(b => b.Id);
             entity.Property(b => b.DiscountPercentage).HasPrecision(5, 2);
+            entity.HasMany(b => b.Items)
+                .WithOne()
+                .HasForeignKey(bi => bi.BasketId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<BasketItem>(entity =>

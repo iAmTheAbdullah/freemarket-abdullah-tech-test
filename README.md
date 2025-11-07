@@ -10,7 +10,7 @@ cd FreemarketFxAbdullahTask
 dotnet run
 ```
 
-API runs on `https://localhost:5001` or `http://localhost:5000`.
+API runs on `http://localhost:5000`.
 
 ## Tests
 
@@ -52,17 +52,17 @@ Skipped to prioritize architecture and testing:
 
 ## API Usage
 
-Use curl or Postman to test endpoints. Examples below assume `https://localhost:5001`.
+Use curl or Postman to test endpoints. Examples below assume `http://localhost:5000`.
 
 ### Create Basket
 ```bash
-curl -X POST https://localhost:5001/api/basket -k
+curl -X POST http://localhost:5000/api/basket -k
 # Returns: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 ```
 
 ### Add Item
 ```bash
-curl -X POST https://localhost:5001/api/basket/{basketId}/items -k \
+curl -X POST http://localhost:5000/api/basket/{basketId}/items -k \
   -H "Content-Type: application/json" \
   -d '{
     "productName": "Laptop",
@@ -75,7 +75,7 @@ curl -X POST https://localhost:5001/api/basket/{basketId}/items -k \
 
 ### Add Discounted Item
 ```bash
-curl -X POST https://localhost:5001/api/basket/{basketId}/items -k \
+curl -X POST http://localhost:5000/api/basket/{basketId}/items -k \
   -H "Content-Type: application/json" \
   -d '{
     "productName": "Mouse",
@@ -88,7 +88,7 @@ curl -X POST https://localhost:5001/api/basket/{basketId}/items -k \
 
 ### Apply Discount Code
 ```bash
-curl -X POST https://localhost:5001/api/basket/{basketId}/discount-code -k \
+curl -X POST http://localhost:5000/api/basket/{basketId}/discount-code -k \
   -H "Content-Type: application/json" \
   -d '{ "discountCode": "SAVE10" }'
 ```
@@ -97,21 +97,21 @@ Seeded codes: `SAVE10`, `SAVE20`, `SAVE30`
 
 ### Get Basket Details
 ```bash
-curl https://localhost:5001/api/basket/{basketId} -k
+curl http://localhost:5000/api/basket/{basketId} -k
 ```
 
 ### Get Totals
 ```bash
 # With VAT
-curl https://localhost:5001/api/basket/{basketId}/total -k
+curl http://localhost:5000/api/basket/{basketId}/total -k
 
 # Without VAT
-curl https://localhost:5001/api/basket/{basketId}/total-without-vat -k
+curl http://localhost:5000/api/basket/{basketId}/total-without-vat -k
 ```
 
 ### Remove Item
 ```bash
-curl -X DELETE https://localhost:5001/api/basket/{basketId}/items/{itemId} -k
+curl -X DELETE http://localhost:5000/api/basket/{basketId}/items/{itemId} -k
 ```
 
 Note: `-k` flag bypasses SSL cert validation for local dev.

@@ -1,6 +1,7 @@
 using FreemarketFxAbdullahTask.Commands;
 using FreemarketFxAbdullahTask.DTOs;
 using FreemarketFxAbdullahTask.Queries;
+using FreemarketFxAbdullahTask.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreemarketFxAbdullahTask.Controllers;
@@ -15,6 +16,7 @@ public class BasketController : ControllerBase
     private readonly ICommandHandler<ApplyDiscountCodeCommand, bool> _applyDiscountHandler;
     private readonly IQueryHandler<GetBasketQuery, Models.Basket?> _getBasketHandler;
     private readonly IQueryHandler<GetBasketTotalQuery, decimal> _getTotalHandler;
+    private readonly IBasketMapper _mapper;
 
     public BasketController(
         ICommandHandler<CreateBasketCommand, Guid> createBasketHandler,
@@ -22,7 +24,8 @@ public class BasketController : ControllerBase
         ICommandHandler<RemoveItemCommand, bool> removeItemHandler,
         ICommandHandler<ApplyDiscountCodeCommand, bool> applyDiscountHandler,
         IQueryHandler<GetBasketQuery, Models.Basket?> getBasketHandler,
-        IQueryHandler<GetBasketTotalQuery, decimal> getTotalHandler)
+        IQueryHandler<GetBasketTotalQuery, decimal> getTotalHandler,
+        IBasketMapper mapper)
     {
         _createBasketHandler = createBasketHandler;
         _addItemHandler = addItemHandler;
@@ -30,6 +33,7 @@ public class BasketController : ControllerBase
         _applyDiscountHandler = applyDiscountHandler;
         _getBasketHandler = getBasketHandler;
         _getTotalHandler = getTotalHandler;
+        _mapper = mapper;
     }
 
     [HttpPost]
@@ -49,27 +53,7 @@ public class BasketController : ControllerBase
             return NotFound();
         }
 
-        var response = new BasketResponse
-        {
-            Id = basket.Id,
-            DiscountCode = basket.DiscountCode,
-            DiscountPercentage = basket.DiscountPercentage,
-            Items = basket.Items.Select(i => new BasketItemResponse
-            {
-                Id = i.Id,
-                ProductName = i.ProductName,
-                Price = i.Price,
-                Quantity = i.Quantity,
-                IsDiscounted = i.IsDiscounted,
-                DiscountPercentage = i.DiscountPercentage,
-                TotalPrice = i.GetTotalPrice()
-            }).ToList(),
-            Subtotal = basket.GetSubtotal(),
-            DiscountAmount = basket.GetDiscountAmount(),
-            TotalWithoutVat = basket.GetTotalWithoutVat(),
-            TotalWithVat = basket.GetTotalWithVat()
-        };
-
+        var response = _mapper.MapToResponse(basket);
         return Ok(response);
     }
 
@@ -90,6 +74,10 @@ public class BasketController : ControllerBase
         {
             var itemId = await _addItemHandler.HandleAsync(command, cancellationToken);
             return Ok(itemId);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
         }
         catch (InvalidOperationException ex)
         {

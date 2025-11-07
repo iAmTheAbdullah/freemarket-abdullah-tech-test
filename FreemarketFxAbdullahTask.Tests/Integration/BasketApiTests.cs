@@ -5,20 +5,14 @@ using FreemarketFxAbdullahTask.DTOs;
 
 namespace FreemarketFxAbdullahTask.Tests.Integration;
 
-public class BasketApiTests : IClassFixture<BasketApiTestFactory>, IDisposable
+public class BasketApiTests : IClassFixture<BasketApiTestFactory>
 {
     private readonly HttpClient _client;
-    private readonly BasketApiTestFactory _factory;
 
     public BasketApiTests(BasketApiTestFactory factory)
     {
-        _factory = factory;
         _client = factory.CreateClient();
-    }
-
-    public void Dispose()
-    {
-        _client?.Dispose();
+        factory.SeedDatabase();
     }
 
     [Fact]
