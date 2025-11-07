@@ -39,7 +39,7 @@ public class BasketController : ControllerBase
         return Ok(basketId);
     }
 
-    [HttpGet("{basketId}")]
+    [HttpGet("{basketId:guid}")]
     public async Task<ActionResult<BasketResponse>> GetBasket(Guid basketId, CancellationToken cancellationToken)
     {
         var basket = await _getBasketHandler.HandleAsync(new GetBasketQuery { BasketId = basketId }, cancellationToken);
@@ -73,7 +73,7 @@ public class BasketController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("{basketId}/items")]
+    [HttpPost("{basketId:guid}/items")]
     public async Task<ActionResult<Guid>> AddItem(Guid basketId, [FromBody] AddItemRequest request, CancellationToken cancellationToken)
     {
         var command = new AddItemCommand
@@ -97,7 +97,7 @@ public class BasketController : ControllerBase
         }
     }
 
-    [HttpDelete("{basketId}/items/{itemId}")]
+    [HttpDelete("{basketId:guid}/items/{itemId:guid}")]
     public async Task<ActionResult> RemoveItem(Guid basketId, Guid itemId, CancellationToken cancellationToken)
     {
         var command = new RemoveItemCommand
@@ -116,7 +116,7 @@ public class BasketController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("{basketId}/total")]
+    [HttpGet("{basketId:guid}/total")]
     public async Task<ActionResult<decimal>> GetTotalWithVat(Guid basketId, CancellationToken cancellationToken)
     {
         try
@@ -135,7 +135,7 @@ public class BasketController : ControllerBase
         }
     }
 
-    [HttpGet("{basketId}/total-without-vat")]
+    [HttpGet("{basketId:guid}/total-without-vat")]
     public async Task<ActionResult<decimal>> GetTotalWithoutVat(Guid basketId, CancellationToken cancellationToken)
     {
         try
@@ -154,7 +154,7 @@ public class BasketController : ControllerBase
         }
     }
 
-    [HttpPost("{basketId}/discount-code")]
+    [HttpPost("{basketId:guid}/discount-code")]
     public async Task<ActionResult> ApplyDiscountCode(Guid basketId, [FromBody] ApplyDiscountCodeRequest request, CancellationToken cancellationToken)
     {
         var command = new ApplyDiscountCodeCommand
