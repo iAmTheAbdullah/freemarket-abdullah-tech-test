@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCommandHandlers(this IServiceCollection services)
     {
         services.AddScoped<IValidationService, ValidationService>();
+        services.AddScoped<IDiscountService, DiscountService>();
         
         services.AddScoped<ICommandHandler<CreateBasketCommand, Guid>, CreateBasketCommandHandler>();
         services.AddScoped<ICommandHandler<AddItemCommand, Guid>, AddItemCommandHandler>();
